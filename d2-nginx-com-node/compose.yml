@@ -1,0 +1,35 @@
+services:
+   proxy-reverso: 
+    image: proxy-reverso
+    container_name: proxy-reverso
+    networks:
+      - fcnet
+    ports:
+      - "8080:80"
+    build:
+      dockerfile: ./Nginx.Dockerfile
+
+   site: 
+    image: conteudo-site-node
+    container_name: site
+    build:
+      dockerfile: ./Node.Dockerfile
+    networks:
+     - fcnet
+
+   db: 
+    image: mysql
+    command: --innodb-use-native-aio=0
+    container_name: banco-de-dados
+    tty: true
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=admin
+    volumes:
+      - ./mysql:/var/lib/mysql
+    networks:
+      - fcnet
+
+networks:
+   fcnet:
+    driver: bridge 
