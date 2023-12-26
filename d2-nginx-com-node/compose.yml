@@ -12,10 +12,12 @@ services:
    site: 
     image: conteudo-site-node
     container_name: site
+    networks:
+      - fcnet
     build:
       dockerfile: ./Node.Dockerfile
-    networks:
-     - fcnet
+    volumes:
+      - ./node:/usr/src
 
    db: 
     image: mysql
@@ -24,11 +26,17 @@ services:
     tty: true
     restart: always
     environment:
+      - MYSQL_USER=matheus
+      - MYSQL_PASSWORD=admin
       - MYSQL_ROOT_PASSWORD=admin
+      - MYSQL_DATABASE=dados
     volumes:
       - ./mysql:/var/lib/mysql
+      - ./mysql-migrations/:/docker-entrypoint-initdb.d/
     networks:
       - fcnet
+    expose:
+      - 3306
 
 networks:
    fcnet:
